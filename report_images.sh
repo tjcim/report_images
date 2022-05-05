@@ -126,13 +126,16 @@ get_output_dir() {
 }
 
 loop_image_files() {
-  for f in ${1}/*.png; do
-    file_input_output_paths "$f"
-    convert_file "$SOURCE_PATH" "$DEST_PATH"
-  done;
-  for f in ${1}/*.jpg; do
-    file_input_output_paths "$f"
-    convert_file "$SOURCE_PATH" "$DEST_PATH"
+  extensions=(png jpg)
+  for extension in ${extensions[@]}
+  do
+    for f in ${1}/*.${extension}; do
+      if [[ -f "$f" ]]
+      then
+        file_input_output_paths "$f"
+        convert_file "$SOURCE_PATH" "$DEST_PATH"
+      fi
+    done;
   done;
 }
 
