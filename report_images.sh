@@ -6,6 +6,8 @@ IMAGE_WIDTH=775
 BORDER_WIDTH=4
 BORDER_COLOR="black"
 
+IMAGE_WIDTH=$((IMAGE_WIDTH - (2*BORDER_WIDTH)))
+
 # +-----------------------------------
 # Functions
 # +-----------------------------------
