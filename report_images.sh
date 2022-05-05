@@ -65,14 +65,13 @@ print_usage() {
 convert_file() {
   if [[ $ACTUALLY_CONVERT -eq 1 ]]
   then
-    local width=$(($(echo $(identify $1) | cut -d " " -f 3 | cut -d "x" -f 1)))
+    local width=$(identify -format "%[width]" "$1")
     if [[ $width -gt $IMAGE_WIDTH ]]
     then
-      # echo $width
-      convert $1 -resize $IMAGE_WIDTH -bordercolor $BORDER_COLOR -border $BORDER_WIDTH $2
+      convert "$1" -resize $IMAGE_WIDTH -bordercolor $BORDER_COLOR -border $BORDER_WIDTH "$2"
       echo "converted $DEST_PATH"
     else
-      convert $1 -bordercolor $BORDER_COLOR -border $BORDER_WIDTH $2
+      convert "$1" -bordercolor $BORDER_COLOR -border $BORDER_WIDTH "$2"
       echo "converted $DEST_PATH"
     fi
   else
@@ -82,15 +81,15 @@ convert_file() {
 
 # Function that establishes the SOURCE_PATH and DEST_PATH for each file
 file_input_output_paths() {
-  SOURCE_PATH=$(realpath ${1})
-  FILE_NAME=$(basename ${1})
+  SOURCE_PATH=$(realpath "${1}")
+  FILE_NAME=$(basename "${1}")
   DEST_PATH="$OUTPUT_DIR/$FILE_NAME"
-  if [[ -f $DEST_PATH ]]
+  if [[ -f "$DEST_PATH" ]]
   then
     local i=0
     FILE_PATH_NO_EXT="${DEST_PATH%.*}"
     EXTENSION="${FILE_NAME##*.}"
-    while [[ -f ${FILE_PATH_NO_EXT}_${i}.$EXTENSION ]]
+    while [[ -f "${FILE_PATH_NO_EXT}_${i}.$EXTENSION" ]]
     do
       # echo "${FILE_PATH_NO_EXT}_${i}.$EXTENSION exists"
       i=$((i + 1))
@@ -109,31 +108,31 @@ get_output_dir() {
     then
       OUTPUT_DIR="${PARENT_DIR}/${2}"
     else
-      OUTPUT_DIR=$(realpath ${2})
+      OUTPUT_DIR="$(realpath ${2})"
     fi
     if [[ ! -d $OUTPUT_DIR ]]
     then
       echo "Creating directory: $OUTPUT_DIR"
-      mkdir $OUTPUT_DIR
+      mkdir "$OUTPUT_DIR"
     fi
   else
     OUTPUT_DIR="${PARENT_DIR}/converted_images"
-    if [[ ! -d $OUTPUT_DIR ]]
+    if [[ ! -d "$OUTPUT_DIR" ]]
     then
       echo "Creating directory: $OUTPUT_DIR"
-      mkdir $OUTPUT_DIR
+      mkdir "$OUTPUT_DIR"
     fi
   fi
 }
 
 loop_image_files() {
   for f in ${1}/*.png; do
-    file_input_output_paths $f
-    convert_file $SOURCE_PATH $DEST_PATH
+    file_input_output_paths "$f"
+    convert_file "$SOURCE_PATH" "$DEST_PATH"
   done;
   for f in ${1}/*.jpg; do
-    file_input_output_paths $f
-    convert_file $SOURCE_PATH $DEST_PATH
+    file_input_output_paths "$f"
+    convert_file "$SOURCE_PATH" "$DEST_PATH"
   done;
 }
 
